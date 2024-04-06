@@ -11,7 +11,7 @@ class AllConfig(Config):
     def parse_args(self):
         description = 'Text-to-Video Retrieval'
         parser = argparse.ArgumentParser(description=description)
-        
+
         # data parameters
         parser.add_argument('--dataset_name', type=str, default='MSRVTT', help="Dataset name")
         parser.add_argument('--videos_dir', type=str, default='data/MSRVTT/vids', help="Location of videos")
@@ -45,6 +45,9 @@ class AllConfig(Config):
         parser.add_argument('--weight_decay', type=float, default=0.2, help='Weight decay')
         parser.add_argument('--warmup_proportion', type=float, default=0.1, help='Warmup proportion for learning rate schedule')
 
+        # topic test parameters
+        parser.add_argument('--samples', type=int, default=500, help='Number of video samples in topic test')
+        parser.add_argument('--topic', type=str, default='main', help='Topic is main topic or non-main topic')
         # frame pooling parameters
         parser.add_argument('--pooling_type', type=str)
         parser.add_argument('--k', type=int, default=-1, help='K value for topk pooling')

@@ -30,7 +30,9 @@ class MSRVTTDataset(Dataset):
         self.split_type = split_type
         db_file = 'data/MSRVTT/MSRVTT_data.json'
         test_csv = 'data/MSRVTT/MSRVTT_JSFUSION_test.csv'
-
+        # 主题聚类测试数据集
+        if split_type == 'topic_test':
+            test_csv = 'data/MSRVTT/cluster_'+str(config.samples)+'_'+config.topic+'.csv'
         if config.msrvtt_train_file == '7k':
             train_csv = 'data/MSRVTT/MSRVTT_train.7k.csv'
         else:
