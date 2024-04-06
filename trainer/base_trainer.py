@@ -96,8 +96,8 @@ class BaseTrainer:
         checkpoint = torch.load(checkpoint_path)
         self.start_epoch = checkpoint['epoch'] + 1 if 'epoch' in checkpoint else 1
         state_dict = checkpoint['state_dict']
-        
-        self.model.load_state_dict(state_dict)
+
+        self.model.load_state_dict(state_dict, strict=False)
 
         if self.optimizer is not None:
             self.optimizer.load_state_dict(checkpoint['optimizer'])
