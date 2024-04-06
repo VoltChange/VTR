@@ -63,7 +63,14 @@ class MSVDDataset(Dataset):
         return ret
 
     def _get_vidpath_and_caption_by_index_train(self, index):
-        vid, caption = self.all_train_pairs[index]
+        vid = self.train_vids[index]
+        captions = self.vid2caption[vid]
+        caption = ""
+        for idx,item in enumerate(captions):
+            if idx == 0:
+                caption = item
+            else:
+                caption = caption + '<sep>' + item
         video_path = os.path.join(self.videos_dir, vid + '.avi')
         return video_path, caption, vid
 
@@ -80,7 +87,7 @@ class MSVDDataset(Dataset):
 
     def __len__(self):
         if self.split_type == 'train':
-            return len(self.all_train_pairs)
+            return len(self.train_vids)
         elif self.split_type == 'test':
             return len(self.all_test_pairs)
         return len(self.test_df)

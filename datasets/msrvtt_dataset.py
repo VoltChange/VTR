@@ -47,17 +47,19 @@ class MSRVTTDataset(Dataset):
         else:
             self.test_df = pd.read_csv(test_csv)
 
-            
+
     def __getitem__(self, index):
-        video_path, caption, video_id = self._get_vidpath_and_caption_by_index(index)
-        imgs, idxs = VideoCapture.load_frames_from_video(video_path, 
-                                                         self.config.num_frames, 
+        if self.split_type == 'train':
+            video_path, caption, video_id = self._get_vidpath_and_caption_by_index_train(index)
+        else:
+            video_path, caption, video_id = self._get_vidpath_and_caption_by_index_test(index)
+        imgs, idxs = VideoCapture.load_frames_from_video(video_path,
+                                                         self.config.num_frames,
                                                          self.config.video_sample_type)
 
         # process images of video
         if self.img_transforms is not None:
             imgs = self.img_transforms(imgs)
-
         return {
             'video_id': video_id,
             'video': imgs,
@@ -67,19 +69,25 @@ class MSRVTTDataset(Dataset):
     
     def __len__(self):
         if self.split_type == 'train':
-            return len(self.all_train_pairs)
+            return len(self.train_vids)
         return len(self.test_df)
 
 
-    def _get_vidpath_and_caption_by_index(self, index):
-        # returns video path and caption as string
-        if self.split_type == 'train':
-            vid, caption = self.all_train_pairs[index]
-            video_path = os.path.join(self.videos_dir, vid + '.mp4')
-        else:
-            vid = self.test_df.iloc[index].video_id
-            video_path = os.path.join(self.videos_dir, vid + '.mp4')
-            caption = self.test_df.iloc[index].sentence
+    def _get_vidpath_and_caption_by_index_train(self, index):
+        vid = self.train_vids[index]
+        video_path = os.path.join(self.videos_dir, vid + '.mp4')
+        captions = self.vid2caption[vid]
+        for idx,item in enumerate(captions):
+            if idx == 0:
+                caption = item
+            else:
+                caption = caption + '<sep>' + item
+        return video_path, caption, vid
+
+    def _get_vidpath_and_caption_by_index_test(self, index):
+        vid = self.test_df.iloc[index].video_id
+        video_path = os.path.join(self.videos_dir, vid + '.mp4')
+        caption = self.test_df.iloc[index].sentence
 
         return video_path, caption, vid
 
