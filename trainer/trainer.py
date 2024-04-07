@@ -54,7 +54,6 @@ class Trainer(BaseTrainer):
             data['video'] = data['video'].to(self.device)
             batch_size = data['video'].shape[0]
             text_embeds, video_embeds_pooled = self.model(data,is_list=True,n_clusters=n_clusters)
-            # todo complete
             # text_embeds = text_embeds.view(batch_size,3,-1)
             # text_embeds = text_embeds.permute(1,0,2)
             output = sim_matrix_training(text_embeds, video_embeds_pooled, self.pooling_type)
@@ -63,6 +62,7 @@ class Trainer(BaseTrainer):
             # [n_clusters,batch_size,dim]
             output = output.permute(1,0,2)
             print(output.size())
+            # todo complete
             loss = self.loss(output, self.model.clip.logit_scale)
             loss.backward()
             
