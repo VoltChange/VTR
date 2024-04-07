@@ -45,10 +45,11 @@ class CLIPTransformer(nn.Module):
             video_features = self.clip.encode_image(video_data)
         if is_list:
             text_features_list = [text.cpu() for text in text_features_list]
-            text_features = torch.tensor([])
             for idx,texts in enumerate(text_features_list):
                 text_features_list[idx] = get_topic_aggregated_embeddings(texts, "agg", n_clusters)
+            # [batch_size,n_clusters,dim]
             text_features = torch.stack(text_features_list).to(device)
+            # [batch_size*n_clusters,dim]
             text_features = text_features.view(batch_size*n_clusters,-1)
         video_features = video_features.reshape(batch_size, self.config.num_frames, -1)
 

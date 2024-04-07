@@ -39,7 +39,7 @@ class Trainer(BaseTrainer):
         total_loss = 0.0
         num_steps = len(self.train_data_loader)
         eval_steps = np.linspace(0, num_steps-1, self.evals_per_epoch+1, dtype=int)[1:]
-        
+        n_clusters = 3
         for batch_idx, data in enumerate(self.train_data_loader):
             # then assume we must tokenize the input, e.g. its a string
             if self.tokenizer is not None:
@@ -53,11 +53,16 @@ class Trainer(BaseTrainer):
             
             data['video'] = data['video'].to(self.device)
             batch_size = data['video'].shape[0]
-            text_embeds, video_embeds_pooled = self.model(data,is_list=True,n_clusters=3)
-            text_embeds = text_embeds.view(batch_size,3,-1)
-            text_embeds = text_embeds.permute(1,0,2)
+            text_embeds, video_embeds_pooled = self.model(data,is_list=True,n_clusters=n_clusters)
+            # todo complete
+            # text_embeds = text_embeds.view(batch_size,3,-1)
+            # text_embeds = text_embeds.permute(1,0,2)
             output = sim_matrix_training(text_embeds, video_embeds_pooled, self.pooling_type)
-            
+            # [batch_size,n_clusters,dim]
+            output = output.view(batch_size,n_clusters,-1)
+            # [n_clusters,batch_size,dim]
+            output = output.permute(1,0,2)
+            print(output.size())
             loss = self.loss(output, self.model.clip.logit_scale)
             loss.backward()
             
