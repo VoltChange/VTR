@@ -23,11 +23,12 @@ def get_clusters(texts, method, n_clusters):
 def aggregate_embeddings(texts):
     return texts.mean(axis=0)
 
-def get_topic_aggregated_embeddings(texts, method, n_clusters):
-    labels = get_cluster_labels(texts, method, n_clusters)
+def get_topic_aggregated_embeddings(text_features, method, n_clusters):
+    text_features_detach = text_features.detach()
+    labels = get_cluster_labels(text_features_detach, method, n_clusters)
     topic_aggregated_embeddings_arrays = []
     for c in np.unique(labels):
-        topic_aggregated_embeddings_arrays.append(texts[labels == c].mean(axis=0))
+        topic_aggregated_embeddings_arrays.append(text_features[labels == c].mean(axis=0))
     return topic_aggregated_embeddings_arrays
 
 
