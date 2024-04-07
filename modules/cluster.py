@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 from sklearn.cluster import KMeans, AgglomerativeClustering
 
 
@@ -29,6 +30,6 @@ def get_topic_aggregated_embeddings(text_features, method, n_clusters):
     topic_aggregated_embeddings_arrays = []
     for c in np.unique(labels):
         topic_aggregated_embeddings_arrays.append(text_features[labels == c].mean(axis=0))
-    return topic_aggregated_embeddings_arrays
+    return torch.stack(topic_aggregated_embeddings_arrays)
 
 

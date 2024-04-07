@@ -43,16 +43,19 @@ class Trainer(BaseTrainer):
         for batch_idx, data in enumerate(self.train_data_loader):
             # then assume we must tokenize the input, e.g. its a string
             if self.tokenizer is not None:
-                data['text'] = self.tokenizer(data['text'], return_tensors='pt', padding=True,
-                                              truncation=True)
+                for idx, texts in enumerate(data['text']):
+                    data['text'][idx] = self.tokenizer(texts.split('<sep>'), return_tensors='pt', padding=True,
+                                                   truncation=True)
             if isinstance(data['text'], torch.Tensor):
                 data['text'] = data['text'].to(self.device)
             else:
-                data['text'] = {key: val.to(self.device) for key, val in data['text'].items()}
+                data['text'] = [text.to(self.device) for text in data['text']]
             
             data['video'] = data['video'].to(self.device)
-
-            text_embeds, video_embeds_pooled = self.model(data)
+            batch_size = data['video'].shape[0]
+            text_embeds, video_embeds_pooled = self.model(data,is_list=True,n_clusters=3)
+            text_embeds = text_embeds.view(batch_size,3,-1)
+            text_embeds = text_embeds.permute(1,0,2)
             output = sim_matrix_training(text_embeds, video_embeds_pooled, self.pooling_type)
             
             loss = self.loss(output, self.model.clip.logit_scale)
