@@ -44,7 +44,7 @@ class AllConfig(Config):
         parser.add_argument('--num_epochs', type=int, default=5)
         parser.add_argument('--weight_decay', type=float, default=0.2, help='Weight decay')
         parser.add_argument('--warmup_proportion', type=float, default=0.1, help='Warmup proportion for learning rate schedule')
-
+        parser.add_argument('--n_clusters', type=int, default=5)
         # topic test parameters
         parser.add_argument('--samples', type=int, default=500, help='Number of video samples in topic test')
         parser.add_argument('--topic', type=str, default='main', help='Topic is main topic or non-main topic')

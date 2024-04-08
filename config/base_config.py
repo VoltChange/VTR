@@ -34,6 +34,7 @@ class Config(ABC):
         self.num_epochs = args.num_epochs
         self.weight_decay = args.weight_decay
         self.warmup_proportion = args.warmup_proportion
+        self.n_clusters = args.n_clusters
 
         self.samples = args.samples
         self.topic = args.topic

@@ -21,8 +21,8 @@ class Trainer(BaseTrainer):
         self.train_data_loader = train_data_loader
         self.valid_data_loader = valid_data_loader
         self.lr_scheduler = lr_scheduler
-        self.tokenizer = tokenizer 
-
+        self.tokenizer = tokenizer
+        self.n_clusters = config.n_clusters
         self.pooling_type = config.pooling_type
         self.window_metric = defaultdict(lambda: deque(maxlen=config.eval_window_size))
         self.best_window = -1.0
@@ -39,7 +39,7 @@ class Trainer(BaseTrainer):
         total_loss = 0.0
         num_steps = len(self.train_data_loader)
         eval_steps = np.linspace(0, num_steps-1, self.evals_per_epoch+1, dtype=int)[1:]
-        n_clusters = 3
+        n_clusters = self.n_clusters
         for batch_idx, data in enumerate(self.train_data_loader):
             # then assume we must tokenize the input, e.g. its a string
             if self.tokenizer is not None:
@@ -61,9 +61,11 @@ class Trainer(BaseTrainer):
             output = output.view(batch_size,n_clusters,-1)
             # [n_clusters,batch_size,dim]
             output = output.permute(1,0,2)
-            print(output.size())
-            # todo complete
-            loss = self.loss(output, self.model.clip.logit_scale)
+            matrix_list = output.unbind(dim=0)
+            loss = 0
+            for matrix in matrix_list:
+                loss = loss + self.loss(matrix, self.model.clip.logit_scale)
+            loss = loss / len(matrix_list)
             loss.backward()
             
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
