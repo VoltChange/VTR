@@ -53,7 +53,7 @@ class Trainer(BaseTrainer):
             data['topic_text'] = [texts.to(self.device) for texts in data['topic_text']]
             data['video'] = data['video'].to(self.device)
 
-            text_embeds, video_embeds_pooled = self.model(data,lambda_coef=)
+            text_embeds, video_embeds_pooled = self.model(data,lambda_coef=self.lambda_coef)
             output = sim_matrix_training(text_embeds, video_embeds_pooled, self.pooling_type)
             
             loss = self.loss(output, self.model.clip.logit_scale)
