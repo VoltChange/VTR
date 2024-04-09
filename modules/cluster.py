@@ -10,7 +10,7 @@ def get_cluster_labels(texts, method, n_clusters):
         # 获取聚类结果，即每个文本样本所属的类别标签
         return kmeans.labels_
     else:
-        agg_clust = AgglomerativeClustering(n_clusters=n_clusters, linkage='complete')
+        agg_clust = AgglomerativeClustering(n_clusters=n_clusters, metric='cosine',linkage='complete')
         return agg_clust.fit_predict(texts)
 
 

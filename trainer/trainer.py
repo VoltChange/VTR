@@ -45,11 +45,12 @@ class Trainer(BaseTrainer):
             if self.tokenizer is not None:
                 data['text'] = self.tokenizer(data['text'], return_tensors='pt', padding=True,
                                               truncation=True)
+                data['topic_text'] = [self.tokenizer(texts, return_tensors='pt',padding=True,truncation=True)for texts in data['topic_text']]
             if isinstance(data['text'], torch.Tensor):
                 data['text'] = data['text'].to(self.device)
             else:
                 data['text'] = {key: val.to(self.device) for key, val in data['text'].items()}
-            
+            data['topic_text'] = [texts.to(self.device) for texts in data['topic_text']]
             data['video'] = data['video'].to(self.device)
 
             text_embeds, video_embeds_pooled = self.model(data)

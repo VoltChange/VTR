@@ -23,15 +23,23 @@ class CLIPTransformer(nn.Module):
         batch_size = data['video'].shape[0]
         text_data = data['text']
         video_data = data['video']
+        topic_text_data = data['topic_text'] if 'topic_text' in data else None
         video_data = video_data.reshape(-1, 3, self.config.input_res, self.config.input_res)
-        
+        topic_text_features = None
         if self.config.huggingface:
             text_features = self.clip.get_text_features(**text_data)
             video_features = self.clip.get_image_features(video_data)
+            if topic_text_data is not None:
+                topic_features = [self.clip.get_text_features(**texts) for texts in topic_text_data]
+                topic_features = [item.mean(dim=0) for item in topic_features]
+                topic_features = torch.stack(topic_features, dim=0)
         else:
             text_features = self.clip.encode_text(text_data)
             video_features = self.clip.encode_image(video_data)
-   
+            if topic_text_data is not None:
+                topic_features = [self.clip.encode_text(texts) for texts in topic_text_data]
+        if topic_text_data is not None:
+            text_features = text_features + topic_features*0.01
         video_features = video_features.reshape(batch_size, self.config.num_frames, -1)
 
         video_features_pooled = self.pool_frames(text_features, video_features)

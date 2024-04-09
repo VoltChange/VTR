@@ -37,19 +37,18 @@ class MSRVTTDataset(Dataset):
             train_csv = 'data/MSRVTT/MSRVTT_train.7k.csv'
         else:
             train_csv = 'data/MSRVTT/MSRVTT_train.9k.csv'
-
-        self.db = load_json(db_file)
+        db_file = 'data/MSRVTT/topic_captions.json'
+        self.vid2caption = load_json(db_file)
         if split_type == 'train':
             train_df = pd.read_csv(train_csv)
             self.train_vids = train_df['video_id'].unique()
-            self._compute_vid2caption()
             self._construct_all_train_pairs()
         else:
             self.test_df = pd.read_csv(test_csv)
 
             
     def __getitem__(self, index):
-        video_path, caption, video_id = self._get_vidpath_and_caption_by_index(index)
+        video_path, caption, video_id ,topic_text= self._get_vidpath_and_caption_by_index(index)
         imgs, idxs = VideoCapture.load_frames_from_video(video_path, 
                                                          self.config.num_frames, 
                                                          self.config.video_sample_type)
@@ -62,6 +61,7 @@ class MSRVTTDataset(Dataset):
             'video_id': video_id,
             'video': imgs,
             'text': caption,
+            'topic_text': topic_text
         }
 
     
@@ -74,27 +74,22 @@ class MSRVTTDataset(Dataset):
     def _get_vidpath_and_caption_by_index(self, index):
         # returns video path and caption as string
         if self.split_type == 'train':
-            vid, caption = self.all_train_pairs[index]
+            vid, caption_with_topic = self.all_train_pairs[index]
             video_path = os.path.join(self.videos_dir, vid + '.mp4')
+            topic_text = self.vid2caption[vid][caption_with_topic['topic']]
+            return video_path, caption_with_topic['caption'], vid , topic_text
         else:
             vid = self.test_df.iloc[index].video_id
             video_path = os.path.join(self.videos_dir, vid + '.mp4')
             caption = self.test_df.iloc[index].sentence
+            return video_path, caption, vid,[]
 
-        return video_path, caption, vid
 
     
     def _construct_all_train_pairs(self):
         self.all_train_pairs = []
         if self.split_type == 'train':
             for vid in self.train_vids:
-                for caption in self.vid2caption[vid]:
-                    self.all_train_pairs.append([vid, caption])
-
-            
-    def _compute_vid2caption(self):
-        self.vid2caption = defaultdict(list)
-        for annotation in self.db['sentences']:
-            caption = annotation['caption']
-            vid = annotation['video_id']
-            self.vid2caption[vid].append(caption)
+                for topic_idx,captions in enumerate(self.vid2caption[vid]):
+                    for caption in captions:
+                        self.all_train_pairs.append([vid,{'caption':caption,'topic':topic_idx}])
