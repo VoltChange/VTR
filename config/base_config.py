@@ -38,6 +38,8 @@ class Config(ABC):
         self.samples = args.samples
         self.topic = args.topic
 
+        self.lambda_coef = args.lambda_coef
+
         self.pooling_type = args.pooling_type
         self.k = args.k
         self.attention_temperature = args.attention_temperature

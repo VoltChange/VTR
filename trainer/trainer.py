@@ -21,8 +21,8 @@ class Trainer(BaseTrainer):
         self.train_data_loader = train_data_loader
         self.valid_data_loader = valid_data_loader
         self.lr_scheduler = lr_scheduler
-        self.tokenizer = tokenizer 
-
+        self.tokenizer = tokenizer
+        self.lambda_coef = config.lambda_coef
         self.pooling_type = config.pooling_type
         self.window_metric = defaultdict(lambda: deque(maxlen=config.eval_window_size))
         self.best_window = -1.0
@@ -53,7 +53,7 @@ class Trainer(BaseTrainer):
             data['topic_text'] = [texts.to(self.device) for texts in data['topic_text']]
             data['video'] = data['video'].to(self.device)
 
-            text_embeds, video_embeds_pooled = self.model(data)
+            text_embeds, video_embeds_pooled = self.model(data,lambda_coef=)
             output = sim_matrix_training(text_embeds, video_embeds_pooled, self.pooling_type)
             
             loss = self.loss(output, self.model.clip.logit_scale)

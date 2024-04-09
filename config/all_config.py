@@ -48,6 +48,9 @@ class AllConfig(Config):
         # topic test parameters
         parser.add_argument('--samples', type=int, default=500, help='Number of video samples in topic test')
         parser.add_argument('--topic', type=str, default='main', help='Topic is main topic or non-main topic')
+
+        parser.add_argument('--lambda_coef',type=float, default=0.01, help='Coefficient')
+
         # frame pooling parameters
         parser.add_argument('--pooling_type', type=str)
         parser.add_argument('--k', type=int, default=-1, help='K value for topk pooling')

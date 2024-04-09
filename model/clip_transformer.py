@@ -19,7 +19,7 @@ class CLIPTransformer(nn.Module):
         self.pool_frames = Transformer(config)
 
 
-    def forward(self, data, return_all_frames=False):
+    def forward(self, data, return_all_frames=False,lambda_coef=0.01):
         batch_size = data['video'].shape[0]
         text_data = data['text']
         video_data = data['video']
@@ -38,7 +38,7 @@ class CLIPTransformer(nn.Module):
                 topic_features = [self.clip.encode_text(**texts).mean(dim=0) for texts in topic_text_data]
                 topic_features = torch.stack(topic_features, dim=0)
         if topic_text_data is not None:
-            text_features = text_features + topic_features*0.01
+            text_features = text_features + topic_features * lambda_coef
         video_features = video_features.reshape(batch_size, self.config.num_frames, -1)
 
         video_features_pooled = self.pool_frames(text_features, video_features)
