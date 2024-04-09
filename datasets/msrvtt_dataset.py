@@ -56,14 +56,19 @@ class MSRVTTDataset(Dataset):
         # process images of video
         if self.img_transforms is not None:
             imgs = self.img_transforms(imgs)
-
-        return {
-            'video_id': video_id,
-            'video': imgs,
-            'text': caption,
-            'topic_text': topic_text
-        }
-
+        if self.split_type =='train':
+            return {
+                'video_id': video_id,
+                'video': imgs,
+                'text': caption,
+                'topic_text': topic_text
+            }
+        else:
+            return {
+                'video_id': video_id,
+                'video': imgs,
+                'text': caption,
+            }
     
     def __len__(self):
         if self.split_type == 'train':
@@ -82,7 +87,7 @@ class MSRVTTDataset(Dataset):
             vid = self.test_df.iloc[index].video_id
             video_path = os.path.join(self.videos_dir, vid + '.mp4')
             caption = self.test_df.iloc[index].sentence
-            return video_path, caption, vid,[]
+            return video_path, caption, vid,None
 
 
     
