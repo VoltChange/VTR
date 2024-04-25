@@ -39,6 +39,7 @@ class Config(ABC):
         self.topic = args.topic
 
         self.lambda_coef = args.lambda_coef
+        self.n_clusters = args.n_clusters
 
         self.pooling_type = args.pooling_type
         self.k = args.k

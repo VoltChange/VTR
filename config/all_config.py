@@ -50,6 +50,7 @@ class AllConfig(Config):
         parser.add_argument('--topic', type=str, default='main', help='Topic is main topic or non-main topic')
 
         parser.add_argument('--lambda_coef',type=float, default=0.01, help='Coefficient')
+        parser.add_argument('--n_clusters',type=int, default=2, help='Number of clusters')
 
         # frame pooling parameters
         parser.add_argument('--pooling_type', type=str)
