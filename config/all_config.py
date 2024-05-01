@@ -51,6 +51,8 @@ class AllConfig(Config):
 
         parser.add_argument('--lambda_coef',type=float, default=0.01, help='Coefficient')
         parser.add_argument('--n_clusters',type=int, default=2, help='Number of clusters')
+        parser.add_argument('--text_pooling_type',type=str,default='attention')
+        parser.add_argument('--topic_dropout', type=float,default=0.3, help='Dropout')
 
         # frame pooling parameters
         parser.add_argument('--pooling_type', type=str)

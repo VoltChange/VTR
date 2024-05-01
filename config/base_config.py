@@ -40,6 +40,8 @@ class Config(ABC):
 
         self.lambda_coef = args.lambda_coef
         self.n_clusters = args.n_clusters
+        self.text_pooling_type = args.text_pooling_type
+        self.topic_dropout = args.topic_dropout
 
         self.pooling_type = args.pooling_type
         self.k = args.k
