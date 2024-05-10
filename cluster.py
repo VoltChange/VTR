@@ -28,20 +28,16 @@ def plot_figure(data1, data2, dataset, sample_num):
     x = np.arange(len(data1))
     width = 0.6
     fig, ax = plt.subplots(figsize=(12, 7))
-    # 将两个列表打包为元组列表
-    pairs = list(zip(data1, data2))
-    # 使用 sort 方法排序
-    pairs.sort(key=lambda pair: (pair[0]+pair[1],pair[0]),reverse=True)  # 根据文本总数排序
-
-    # 解包排序后的列表,得到排好序的 a 和 b
-    a_sorted = [x for x, y in pairs]
-    b_sorted = [y for x, y in pairs]
+    # 使用zip结合两个列表，然后根据a进行主要排序，根据b进行次要排序
+    combined = sorted(zip(data1, data2), key=lambda x: (x[0]+x[1], x[0]),reverse=True)
+    # 解压排序后的列表
+    a_sorted, b_sorted = zip(*combined)
     ax.bar(x, a_sorted, width, label='次要主题文本数')
-    ax.bar(x, b_sorted, width, bottom=data1, label='主要主题文本数')
-    ax.set_xlabel('视频序号', fontsize=24)
-    ax.set_ylabel('文本数', fontsize=24)
-    ax.set_title(dataset + '数据集' + str(sample_num) + '视频样本规模数据分布', fontsize=24)
-    ax.legend(fontsize=14)
+    ax.bar(x, b_sorted, width, bottom=a_sorted, label='主要主题文本数')
+    ax.set_xlabel('视频序号', fontsize=28)
+    ax.set_ylabel('文本数', fontsize=28)
+    ax.set_title(dataset + '数据集' + str(sample_num) + '视频样本规模数据分布', fontsize=28)
+    ax.legend(fontsize=28)
     plt.xticks(fontsize=20)
     plt.yticks(fontsize=20)
     # 显示图形
