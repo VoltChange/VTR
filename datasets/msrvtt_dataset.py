@@ -37,9 +37,9 @@ class MSRVTTDataset(Dataset):
             train_csv = 'data/MSRVTT/MSRVTT_train.7k.csv'
         else:
             train_csv = 'data/MSRVTT/MSRVTT_train.9k.csv'
-        db_file = 'data/MSRVTT/topic_captions_'+str(self.config.n_clusters)+'.json'
-        self.vid2caption = load_json(db_file)
         if split_type == 'train':
+            db_file = 'data/MSRVTT/topic_captions_' + str(self.config.n_clusters) + '.json'
+            self.vid2caption = load_json(db_file)
             train_df = pd.read_csv(train_csv)
             self.train_vids = train_df['video_id'].unique()
             self._construct_all_train_pairs()
