@@ -31,3 +31,11 @@ if __name__ == '__main__':
     print(attention_weights)
     attention_weights = torch.squeeze(attention_weights)
     print(attention_weights)
+    html = ''
+    for idx,frame in enumerate(video_set.frames_origin[top_idx]):
+        # 在HTML中使用<img>标签显示图像
+        img_tag = f'<p><img src="data:image/jpeg;base64,{frame}"/>{str(attention_weights[idx])}<p>'
+        html += img_tag
+    # 将HTML字符串写入到一个HTML文件中
+    with open('frame.html', 'w') as f:
+        f.write(html)
