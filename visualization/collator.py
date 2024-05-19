@@ -25,9 +25,8 @@ class Collator:
         text_embed, vid_embed, vid_embed_pooled = self.model(data, return_all_frames=True)
         sims_batch = sim_matrix_training(text_embed, vid_embed_pooled, 'transformer')
         sims_batch = sims_batch.squeeze().cpu()
-        print(sims_batch)
         rank_list = torch.argsort(sims_batch,descending=True)
-        return rank_list
+        return rank_list.detach().cpu().numpy()
     @staticmethod
     def attention_weights(attention,text_embeds, video_embeds):
         num_texts, _ = text_embeds.shape
@@ -72,4 +71,5 @@ class Collator:
         attention = transformer.cross_attn
 
         attention_weights = Collator.attention_weights(attention,text_embeds,video_embeds)
-        return attention_weights
+        attention_weights.squeeze()
+        return attention_weights.detach().cpu().numpy()

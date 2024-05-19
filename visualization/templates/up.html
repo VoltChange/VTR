@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本视频检索系统</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <h1>文本视频检索系统</h1>
+    <div class="search-box">
+        <input type="text" placeholder="输入文本..." id="user_input">
+        <button onclick="search()">搜索</button>
+    </div>
+    <div class="video-container" style="display: none;" id="video-container">
+        <div class="video-box">
+            <video controls>
+                <source src="video1.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-box">
+            <video controls>
+                <source src="video2.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="video-box">
+            <video controls>
+                <source src="video3.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+    function search() {
+        const inputField = document.getElementById('user_input');
+        const userInput = inputField.value;
+        const videoContainer = document.getElementById('video-container');
+        videoContainer.innerHTML = ''
+        // 使用 Axios 发送 POST 请求到服务器
+        axios.post('/search', {user_input: userInput})
+            .then(response => {
+                var topVideo = response.data.topVideo
+                topVideo.forEach((source, idx) => {
+                    const videoBox = document.createElement('div')
+                    videoBox.setAttribute('class', 'video-box')
+                    const videoElement = document.createElement('video');
+                    videoElement.src = 'static/videodata/' + source;
+                    videoElement.controls = true; // 添加控制按钮
+                    videoBox.innerHTML = '<h2>Top' + (idx + 1) + '</h2>'
+                    videoBox.appendChild(videoElement)
+                    // top frame
+                    const frameContainer = document.createElement('div')
+                    frameContainer.setAttribute('class', 'frame-container')
+                    const topFrames = response.data.topFrame[idx]
+                    topFrames.forEach(frame => {
+                        const frameBox = document.createElement('div')
+                        frameBox.setAttribute('class', 'frame-box')
+                        const img = document.createElement('img')
+                        img.src = `data:image/jpeg;base64,${frame.base64}`
+                        const weight = document.createElement('h3')
+                        weight.innerHTML = frame.weight.toFixed(4)
+                        frameBox.appendChild(img)
+                        frameBox.appendChild(weight)
+                        frameContainer.appendChild(frameBox)
+                    })
+                    videoBox.appendChild(frameContainer)
+                    videoContainer.appendChild(videoBox);
+                });
+                console.log(response.data); // 处理服务器响应
+            })
+            .catch(error => {
+                console.error(error); // 处理错误
+            });
+        showVideos()
+    }
+
+    function showVideos() {
+        var videoContainer = document.querySelector(".video-container");
+        videoContainer.style.display = "flex";
+    }
+</script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #e6d6ff, #d9e7ff); /* 调整了背景渐变色 */
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.7); /* 半透明白色背景 */
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); /* 调整了阴影效果 */
+        backdrop-filter: blur(10px); /* 背景虚化效果 */
+        border-radius: 8px; /* 添加了边角圆角 */
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #6c5ce7;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #6c5ce7;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    h3 {
+        text-align: center;
+        color: #093e47;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        margin-top: 2px;
+    }
+
+    .search-box {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .search-box input {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        flex: 1;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .search-box button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background: linear-gradient(45deg, #9370db, #6a5acd);
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-left: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .search-box button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .video-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .video-box {
+        margin-top: 50px;
+        width: 25%;
+        margin-bottom: 20px;
+        margin-left: 20px;
+        margin-right: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        background-color: rgba(227, 223, 239, 0.8);
+        border-radius: 4px;
+        border-color: #958aeb;
+        transition: transform 0.3s ease;
+    }
+
+    .video-box:hover {
+        transform: scale(1.15);
+        background: linear-gradient(45deg, #aad5ec, #ccb8f1);
+        z-index: 1;
+    }
+
+    video {
+        width: 100%;
+        max-height: 200px;
+        background-color: #000; /* 设置视频背景颜色为黑色 */
+        border-radius: 8px; /* 添加圆角边框 */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 添加投影效果 */
+        border-color: #958aeb;
+    }
+
+    .frame-container {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+    }
+
+    .frame-box {
+        width: 30%;
+        max-height: 70px;
+        border-color: #093e47;
+        border-radius: 3px;
+        padding: 10px;
+    }
+
+    .frame-box:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        background-color: rgb(173, 156, 207);
+        border:2px solid rgb(165, 152, 226);
+        border-radius: 3px;
+    }
+
+    img {
+        width: 100%;
+        max-height: 50px;
+    }
+</style>
+</html>
+
+

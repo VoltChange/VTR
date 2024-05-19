@@ -34,12 +34,12 @@ def plot_figure(data1, data2, dataset, sample_num):
     a_sorted, b_sorted = zip(*combined)
     ax.bar(x, a_sorted, width, label='次要主题文本数')
     ax.bar(x, b_sorted, width, bottom=a_sorted, label='主要主题文本数')
-    ax.set_xlabel('视频序号', fontsize=28)
-    ax.set_ylabel('文本数', fontsize=28)
+    ax.set_xlabel('视频序号', fontsize=36)
+    ax.set_ylabel('文本数', fontsize=36)
     ax.set_title(dataset + '数据集' + str(sample_num) + '视频样本规模数据分布', fontsize=28)
     ax.legend(fontsize=28)
-    plt.xticks(fontsize=20)
-    plt.yticks(fontsize=20)
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
     # 显示图形
     plt.show()
 
@@ -49,7 +49,7 @@ class DataJson:
         self.dataset = dataset
         if self.dataset == 'MSRVTT':
             self.db = load_json('data/MSRVTT/MSRVTT_data.json')
-            self.video_ids = [item['video_id'] for item in self.db['videos']]
+            self.video_ids = [item['video_id'] for item in self.db['videodata']]
         else:
             self.db = load_json('data/MSVD/captions_msvd.json')
             self.video_ids = [key for key in self.db.keys()]
