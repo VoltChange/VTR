@@ -59,4 +59,4 @@ class VideoProcessor:
 
         frames_converted = torch.stack(frames_converted).float() / 255
         cap.release()
-        return frame_idxs,frames_origin,frames_converted
+        return frame_idxs,frames_origin,frames_converted,vlen

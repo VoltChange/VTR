@@ -45,22 +45,26 @@ CORS(app)  # 解决跨域问题
 @torch.no_grad()
 def search():
     topF = 3
-    result = {'topVideo': [], 'topFrame': []}
+    result = {'topVideo': [], 'topFrame': [], 'frameNum': []}
     user_input = request.json['user_input']
     rank_list = collator.sort(user_input, video_set.frames_converted)
     topK = min(3, len(rank_list))
     video_idx = rank_list[0:topK].tolist()
     video_name = [video_set.video_name[idx] for idx in video_idx]
+    frame_num = [video_set.video_frame_num[idx] for idx in video_idx]
     frames_origin = [video_set.frames_origin[idx] for idx in video_idx]
     frames_converted = [video_set.frames_converted[idx] for idx in video_idx]
     attention_weights = collator.get_attention_weights(user_input, frames_converted)
     result['topVideo'] = video_name
+    result['frameNum'] = frame_num
+    frame_idxs = [video_set.frame_idx[idx] for idx in video_idx]
     for video_idx in range(topK):
         weights = attention_weights[video_idx].squeeze()
         weights_rank = numpy.argsort(-weights).tolist()[0:topF]
         top_frames = []
-        for frame_idx in weights_rank:
-            frame = {'base64': frames_origin[video_idx][frame_idx], 'weight': float(weights[frame_idx])}
+        for idx in weights_rank:
+            frame = {'base64': frames_origin[video_idx][idx], 'weight': float(weights[idx]),
+                     'position': int(frame_idxs[video_idx][idx])}
             top_frames.append(frame)
         result['topFrame'].append(top_frames)
     return jsonify(result)

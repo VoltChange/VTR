@@ -64,6 +64,9 @@
                         weight.innerHTML = frame.weight.toFixed(4)
                         frameBox.appendChild(img)
                         frameBox.appendChild(weight)
+                        frameBox.addEventListener('click', function () {
+                            videoElement.currentTime = (frame.position / response.data.frameNum[idx]) * videoElement.duration
+                        })
                         frameContainer.appendChild(frameBox)
                     })
                     videoBox.appendChild(frameContainer)
@@ -206,7 +209,7 @@
     .frame-box:hover {
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         background-color: rgb(173, 156, 207);
-        border:2px solid rgb(165, 152, 226);
+        border: 2px solid rgb(165, 152, 226);
         border-radius: 3px;
     }
 

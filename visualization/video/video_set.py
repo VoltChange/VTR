@@ -16,6 +16,7 @@ class VideoSet:
         self.frames_origin = []
         self.frames_converted = []
         self.video_name = []
+        self.video_frame_num = []
         self.img_transforms = init_transform_dict(input_res)['clip_test']
         # 获取目录下的所有文件和目录列表
         entries = os.listdir(video_path)
@@ -23,11 +24,12 @@ class VideoSet:
         file_names = [entry for entry in entries if os.path.isfile(os.path.join(video_path, entry))]
         for video_name in file_names:
             video = os.path.join(video_path, video_name)
-            frame_idxs, frames_origin, frames_converted = VideoProcessor.load_frames_from_video(video,self.frame_num)
+            frame_idxs, frames_origin, frames_converted,video_frames = VideoProcessor.load_frames_from_video(video,self.frame_num)
             self.video_name.append(video_name)
             self.frame_idx.append(frame_idxs)
             self.frames_origin.append(VideoSet.toBase64(frames_origin))
             self.frames_converted.append(self.img_transforms(frames_converted))
+            self.video_frame_num.append(video_frames)
     @staticmethod
     def toBase64(frames):
         base64_imgs = []
