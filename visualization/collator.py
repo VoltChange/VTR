@@ -1,5 +1,8 @@
 import torch
 import math
+import os
+import sys
+sys.path.append('../')
 from model.model_factory import ModelFactory
 from transformers import CLIPTokenizer
 import torch.nn.functional as F

@@ -9,8 +9,8 @@ from PIL import Image
 from flask import Flask, jsonify, request, render_template, send_from_directory
 from flask_cors import CORS
 
-from visualization.collator import Collator
-from visualization.video.video_set import VideoSet
+from collator import Collator
+from video.video_set import VideoSet
 
 
 # 载入模型
@@ -21,7 +21,7 @@ class Config():
         self.video_sample_type = 'uniform'
         self.input_res = 224
 
-        self.model_path = 'model/model.pth'
+        self.model_path = 'modeldata/model.pth'
         self.load_epoch = -1
         self.metric = 't2v'
 
