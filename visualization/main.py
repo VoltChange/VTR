@@ -48,7 +48,7 @@ def search():
     result = {'topVideo': [], 'topFrame': [], 'frameNum': []}
     user_input = request.json['user_input']
     rank_list = collator.sort(user_input, video_set.frames_converted)
-    topK = min(3, len(rank_list))
+    topK = min(6, len(rank_list))
     video_idx = rank_list[0:topK].tolist()
     video_name = [video_set.video_name[idx] for idx in video_idx]
     frame_num = [video_set.video_frame_num[idx] for idx in video_idx]
